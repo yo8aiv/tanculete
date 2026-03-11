@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Battle City - HTML</title>
+
+<style>
+body{
+background:black;
+color:white;
+text-align:center;
+font-family:Arial;
+}
+
+canvas{
+background:#111;
+border:3px solid #888;
+}
+</style>
+
+</head>
+<body>
+
+<h2>Battle City (1985 style)</h2>
+<p>Move: Arrow keys | Shoot: SPACE</p>
+
+<canvas id="game" width="416" height="416"></canvas>
+
+<script>
+
+const canvas=document.getElementById("game")
+const ctx=canvas.getContext("2d")
+
+const tile=32
+const mapSize=13
+
+const player={
+x:6*tile,
+y:11*tile,
+dir:0,
+speed:2
+}
+
+let bullets=[]
+let enemies=[]
+let bricks=[]
+let explosions=[]
+
+const keys={}
+
+document.addEventListener("keydown",e=>{
+keys[e.keyCode]=true
+})
+
+document.addEventListener("keyup",e=>{
+keys[e.keyCode]=false
+})
+
+function createMap(){
+
+for(let y=0;y<mapSize;y++)
+for(let x=0;x<mapSize;x++){
+
+if(Math.random()<0.2){
+
+bricks.push({
+x:x*tile,
+y:y*tile,
+hp:2
+})
+
+}
+
+}
+
+}
+
+function spawnEnemies(){
+
+for(let i=0;i<4;i++){
+
+enemies.push({
+x:i*tile*3,
+y:0,
+dir:2,
+speed:1.2,
+cooldown:0
+})
+
+}
+
+}
+
+function shoot(x,y,dir,owner){
+
+bullets.push({
+x:x+12,
+y:y+12,
+dir:dir,
+speed:5,
+owner:owner
+})
+
+}
+
+function movePlayer(){
+
+if(keys[37]){
+player.x-=player.speed
+player.dir=3
+}
+
+if(keys[39]){
+player.x+=player.speed
+player.dir=1
+}
+
+if(keys[38]){
+player.y-=player.speed
+player.dir=0
+}
+
+if(keys[40]){
+player.y+=player.speed
+player.dir=2
+}
+
+}
+
+function enemyAI(e){
+
+if(Math.random()<0.02)
+e.dir=Math.floor(Math.random()*4)
+
+if(e.dir==0)e.y-=e.speed
+if(e.dir==1)e.x+=e.speed
+if(e.dir==2)e.y+=e.speed
+if(e.dir==3)e.x-=e.speed
+
+if(Math.random()<0.01)
+shoot(e.x,e.y,e.dir,"enemy")
+
+}
+
+function updateBullets(){
+
+bullets.forEach((b,i)=>{
+
+if(b.dir==0)b.y-=b.speed
+if(b.dir==1)b.x+=b.speed
+if(b.dir==2)b.y+=b.speed
+if(b.dir==3)b.x-=b.speed
+
+if(b.x<0||b.x>416||b.y<0||b.y>416)
+bullets.splice(i,1)
+
+bricks.forEach((br,j)=>{
+
+if(
+b.x>br.x &&
+b.x<br.x+tile &&
+b.y>br.y &&
+b.y<br.y+tile
+){
+
+br.hp--
+
+explosions.push({x:br.x,y:br.y,t:10})
+
+bullets.splice(i,1)
+
+if(br.hp<=0)
+bricks.splice(j,1)
+
+}
+
+})
+
+})
+
+}
+
+function drawTank(x,y,dir,color){
+
+ctx.fillStyle=color
+ctx.fillRect(x+6,y+6,20,20)
+
+ctx.fillStyle="white"
+
+if(dir==0)ctx.fillRect(x+14,y,4,12)
+if(dir==1)ctx.fillRect(x+20,y+14,12,4)
+if(dir==2)ctx.fillRect(x+14,y+20,4,12)
+if(dir==3)ctx.fillRect(x,y+14,12,4)
+
+}
+
+function draw(){
+
+ctx.clearRect(0,0,416,416)
+
+bricks.forEach(b=>{
+ctx.fillStyle="#aa5500"
+ctx.fillRect(b.x,b.y,tile,tile)
+})
+
+drawTank(player.x,player.y,player.dir,"lime")
+
+enemies.forEach(e=>{
+drawTank(e.x,e.y,e.dir,"red")
+})
+
+ctx.fillStyle="yellow"
+bullets.forEach(b=>{
+ctx.fillRect(b.x,b.y,4,4)
+})
+
+explosions.forEach((ex,i)=>{
+ctx.fillStyle="orange"
+ctx.fillRect(ex.x+8,ex.y+8,16,16)
+ex.t--
+if(ex.t<=0)explosions.splice(i,1)
+})
+
+}
+
+function update(){
+
+movePlayer()
+
+enemies.forEach(enemyAI)
+
+updateBullets()
+
+draw()
+
+requestAnimationFrame(update)
+
+}
+
+document.addEventListener("keydown",e=>{
+
+if(e.keyCode==32){
+
+shoot(player.x,player.y,player.dir,"player")
+
+}
+
+})
+
+createMap()
+spawnEnemies()
+update()
+
+</script>
+
+</body>
+</html>
