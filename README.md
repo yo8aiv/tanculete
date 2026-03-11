@@ -1,8 +1,8 @@
-JavaScript/HTML5 remake of the Famicom "Battle City" game
+JavaScript/HTML5 remake al jocului "Tanculete"
 =====================================================
 
-[Play](http://newagebegins.github.io/BattleCity/BattleCity.html)  
-[Run tests](http://newagebegins.github.io/BattleCity/SpecRunner.html)
+[Play](http://yo8aiv.github.io/Tanculete/Tanculete.html)  
+[Run tests](http://yo8aiv.github.io/Tanculete/SpecRunner.html)
 
 The code was written with TDD (Test-Driven Development) methodology.
 
