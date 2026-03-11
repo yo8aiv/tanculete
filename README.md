@@ -1,8 +1,8 @@
 JavaScript/HTML5 remake al jocului "Tanculete"
 =====================================================
 
-[Play]([http://yo8aiv.github.io/Tanculete/Tanculete.html](https://yo8aiv.github.io/tanculete/Tanculete.html))  
-[Run tests](http://yo8aiv.github.io/Tanculete/SpecRunner.html)
+[Play](https://yo8aiv.github.io/tanculete/Tanculete.html)
+[Run tests](https://yo8aiv.github.io/tanculete/SpecRunner.html)
 
 The code was written with TDD (Test-Driven Development) methodology.
 
